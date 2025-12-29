@@ -293,7 +293,9 @@
 </div>
 
 <script>
-const API = 'https://nest-js-jwt-postgre-sql.vercel.app/';
+const API = window.location.hostname === 'localhost' 
+  ? 'http://localhost:3000' 
+  : 'https://nest-js-jwt-postgre-sql.vercel.app';
 let token = null;
 let editingTaskId = null;
 let sharingTaskId = null;
@@ -350,7 +352,7 @@ authBtn.addEventListener('click', async () => {
     showApp();
   } catch (err) {
     console.error('Auth error:', err);
-    alert('Connection error. Backend is unreachable.');
+    alert('Connection error. Make sure backend is running on localhost:3000');
   }
 });
 
