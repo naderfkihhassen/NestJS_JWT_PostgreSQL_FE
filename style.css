@@ -1,0 +1,247 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(120deg, #6b73ff, #7e57c2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.card {
+  background: #fff;
+  padding: 24px;
+  width: 340px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+}
+
+.tabs .active {
+  background: #6b73ff;
+  color: white;
+}
+
+input,
+textarea,
+select,
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+button {
+  background: #6b73ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #5a62e6;
+}
+
+button.secondary {
+  background: #95a5a6;
+}
+
+button.secondary:hover {
+  background: #7f8c8d;
+}
+
+button.edit-btn {
+  background: #f39c12;
+}
+
+button.edit-btn:hover {
+  background: #e67e22;
+}
+
+button.share-btn {
+  background: #16a085;
+}
+
+button.share-btn:hover {
+  background: #138d75;
+}
+
+#app {
+  width: 700px;
+  max-width: 95vw;
+  background: #f5f6fa;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+header > div {
+  display: flex;
+  gap: 8px;
+}
+
+header button {
+  width: auto;
+  padding: 8px 16px;
+  margin: 0;
+}
+
+.task {
+  background: white;
+  padding: 18px;
+  border-radius: 16px;
+  margin-top: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.task h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.task p {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.task-meta {
+  margin-bottom: 12px;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.task-actions button {
+  width: auto;
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 6px;
+  margin-bottom: 4px;
+}
+
+.badge.owner {
+  background: #3498db;
+  color: white;
+}
+
+.badge.shared {
+  background: #e74c3c;
+  color: white;
+}
+
+.badge.read {
+  background: #95a5a6;
+  color: white;
+}
+
+.badge.write {
+  background: #27ae60;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  width: 380px;
+  max-width: 90vw;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-card h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-actions button {
+  flex: 1;
+  margin: 0;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.empty-state {
+  text-align: center;
+  color: #666;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 16px;
+  margin-top: 12px;
+}
+
+.debug-info {
+  font-size: 10px;
+  color: #999;
+  margin-top: 10px;
+  padding: 6px 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-family: monospace;
+  border-left: 3px solid #ddd;
+}
