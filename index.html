@@ -253,9 +253,26 @@
     <button id="registerTab">Register</button>
   </div>
 
-  <input id="email" placeholder="Email" type="email" />
-  <input id="password" type="password" placeholder="Password" />
-  <button id="authBtn">Login</button>
+  <div id="authForm">
+    <input id="email" placeholder="Email" type="email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button id="authBtn">Login</button>
+  </div>
+
+  <div id="verificationMessage" class="hidden" style="text-align: center; padding: 20px;">
+    <p style="color: #27ae60; font-weight: 600;">✓ Registration successful!</p>
+    <p style="color: #666; font-size: 14px;">Please check your email to verify your account.</p>
+    <button id="resendBtn" style="margin-top: 10px;">Resend Verification Email</button>
+    <button id="backToLoginBtn" class="secondary" style="margin-top: 10px;">Back to Login</button>
+  </div>
+</div>
+
+<!-- Verification Success Card -->
+<div id="verify-card" class="card hidden">
+  <div style="text-align: center;">
+    <h2>✓ Email Verified!</h2>
+    <p style="color: #666;">Your email has been successfully verified. Redirecting to your tasks...</p>
+  </div>
 </div>
 
 <div id="app" class="hidden">
@@ -314,8 +331,17 @@
   let editingTaskId = null;
   let sharingTaskId = null;
   let allTasks = [];
+  let pendingVerificationEmail = null;
 
   console.log('Task Manager initialized');
+
+  // Check for verification token in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const verificationToken = urlParams.get('token');
+  
+  if (verificationToken) {
+    verifyEmailToken(verificationToken);
+  }
 
   // ---------- AUTH ----------
   const loginTab = document.getElementById('loginTab');
@@ -361,14 +387,82 @@
         return;
       }
 
-      token = data.access_token;
-      console.log('Logged in successfully');
-      showApp();
+      if (endpoint === 'register') {
+        // Show verification message
+        pendingVerificationEmail = email;
+        document.getElementById('authForm').classList.add('hidden');
+        document.getElementById('verificationMessage').classList.remove('hidden');
+      } else {
+        // Login successful
+        token = data.access_token;
+        console.log('Logged in successfully');
+        showApp();
+      }
     } catch (err) {
       console.error('Auth error:', err);
       alert('Connection error. Make sure backend is running');
     }
   });
+
+  // Resend verification email
+  document.getElementById('resendBtn').addEventListener('click', async () => {
+    if (!pendingVerificationEmail) return;
+    
+    try {
+      const res = await fetch(`${API}/auth/resend-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: pendingVerificationEmail })
+      });
+
+      const data = await res.json();
+      
+      if (res.ok) {
+        alert('✓ Verification email sent! Please check your inbox.');
+      } else {
+        alert(data.message || 'Failed to resend email');
+      }
+    } catch (err) {
+      console.error('Resend error:', err);
+      alert('Failed to resend verification email');
+    }
+  });
+
+  // Back to login
+  document.getElementById('backToLoginBtn').addEventListener('click', () => {
+    document.getElementById('authForm').classList.remove('hidden');
+    document.getElementById('verificationMessage').classList.add('hidden');
+    loginTab.click();
+    emailInput.value = '';
+    passwordInput.value = '';
+  });
+
+  // Verify email token from URL
+  async function verifyEmailToken(token) {
+    document.getElementById('auth-card').classList.add('hidden');
+    document.getElementById('verify-card').classList.remove('hidden');
+
+    try {
+      const res = await fetch(`${API}/auth/verify?token=${token}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        token = data.access_token;
+        setTimeout(() => {
+          showApp();
+        }, 2000);
+      } else {
+        alert(data.message || 'Verification failed');
+        document.getElementById('verify-card').classList.add('hidden');
+        document.getElementById('auth-card').classList.remove('hidden');
+      }
+    } catch (err) {
+      console.error('Verification error:', err);
+      alert('Verification failed');
+      document.getElementById('verify-card').classList.add('hidden');
+      document.getElementById('auth-card').classList.remove('hidden');
+    }
+  }
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
     token = null;
