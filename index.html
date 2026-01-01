@@ -335,12 +335,30 @@
 
   console.log('Task Manager initialized');
 
-  // Check for verification token in URL
+  // Check for verification in URL parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const verificationToken = urlParams.get('token');
+  const isVerified = urlParams.get('verified');
+  const urlToken = urlParams.get('token');
+  const verificationError = urlParams.get('error');
   
-  if (verificationToken) {
-    verifyEmailToken(verificationToken);
+  if (isVerified === 'true' && urlToken) {
+    // Email verified successfully
+    token = urlToken;
+    document.getElementById('auth-card').classList.add('hidden');
+    document.getElementById('verify-card').classList.remove('hidden');
+    
+    // Clear URL parameters
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    // Show app after 2 seconds
+    setTimeout(() => {
+      document.getElementById('verify-card').classList.add('hidden');
+      showApp();
+    }, 2000);
+  } else if (isVerified === 'false') {
+    // Verification failed
+    alert('Verification failed: ' + (verificationError || 'Unknown error'));
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
 
   // ---------- AUTH ----------
@@ -438,17 +456,22 @@
   });
 
   // Verify email token from URL
-  async function verifyEmailToken(token) {
+  async function verifyEmailToken(verificationToken) {
     document.getElementById('auth-card').classList.add('hidden');
     document.getElementById('verify-card').classList.remove('hidden');
 
     try {
-      const res = await fetch(`${API}/auth/verify?token=${token}`);
+      const res = await fetch(`${API}/auth/verify?token=${verificationToken}`);
       const data = await res.json();
 
       if (res.ok) {
+        // Set the token from verification response
         token = data.access_token;
+        console.log('Email verified, token received:', token);
+        
+        // Wait 2 seconds then show app
         setTimeout(() => {
+          document.getElementById('verify-card').classList.add('hidden');
           showApp();
         }, 2000);
       } else {
@@ -458,7 +481,7 @@
       }
     } catch (err) {
       console.error('Verification error:', err);
-      alert('Verification failed');
+      alert('Verification failed. Please try again.');
       document.getElementById('verify-card').classList.add('hidden');
       document.getElementById('auth-card').classList.remove('hidden');
     }
