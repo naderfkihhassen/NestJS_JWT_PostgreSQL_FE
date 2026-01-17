@@ -6,7 +6,6 @@ let allTasks = [];
 
 console.log("Task Manager initialized");
 
-// ---------- AUTH ----------
 const loginTab = document.getElementById("loginTab");
 const registerTab = document.getElementById("registerTab");
 const authBtn = document.getElementById("authBtn");
@@ -74,7 +73,6 @@ function showApp() {
   loadTasks();
 }
 
-// ---------- LOAD TASKS ----------
 async function loadTasks() {
   const res = await fetch('/tasks', {
     headers: {
@@ -118,7 +116,6 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// ---------- CREATE TASK ----------
 document.getElementById("newTaskBtn").addEventListener("click", () => {
   editingTaskId = null;
   document.getElementById("taskModalTitle").textContent = "Create New Task";
@@ -127,7 +124,6 @@ document.getElementById("newTaskBtn").addEventListener("click", () => {
   document.getElementById("taskModal").classList.remove("hidden");
 });
 
-// ---------- SAVE TASK ----------
 document.getElementById("saveTaskBtn").addEventListener("click", async () => {
   const title = document.getElementById("taskTitle").value.trim();
   const description = document.getElementById("taskDesc").value.trim();
@@ -194,7 +190,6 @@ function closeTaskModal() {
   editingTaskId = null;
 }
 
-// ---------- EDIT TASK ----------
 function handleEditTask(taskId) {
   console.log("EDIT CLICKED for task:", taskId);
   editingTaskId = taskId;
@@ -212,7 +207,6 @@ function handleEditTask(taskId) {
   }
 }
 
-// ---------- SHARE TASK ----------
 function handleShareTask(taskId, taskTitle) {
   console.log("SHARE CLICKED for task:", taskId);
   sharingTaskId = taskId;
@@ -277,7 +271,6 @@ function closeShareModal() {
   sharingTaskId = null;
 }
 
-// Close modals on outside click
 document.getElementById("taskModal").addEventListener("click", (e) => {
   if (e.target.id === "taskModal") closeTaskModal();
 });

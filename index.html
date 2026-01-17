@@ -267,7 +267,6 @@
   </div>
 </div>
 
-<!-- Verification Success Card -->
 <div id="verify-card" class="card hidden">
   <div style="text-align: center;">
     <h2>✓ Email Verified!</h2>
@@ -287,7 +286,6 @@
   <div id="tasks"></div>
 </div>
 
-<!-- Task Modal -->
 <div id="taskModal" class="modal hidden">
   <div class="modal-card">
     <h3 id="taskModalTitle">New Task</h3>
@@ -300,7 +298,6 @@
   </div>
 </div>
 
-<!-- Share Modal -->
 <div id="shareModal" class="modal hidden">
   <div class="modal-card">
     <h3>Share Task</h3>
@@ -318,7 +315,6 @@
 </div>
 
 <script>
-  // API URL configuration
   const API = (() => {
     const hostname = window.location.hostname;
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
@@ -335,33 +331,27 @@
 
   console.log('Task Manager initialized');
 
-  // Check for verification in URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const isVerified = urlParams.get('verified');
   const urlToken = urlParams.get('token');
   const verificationError = urlParams.get('error');
   
   if (isVerified === 'true' && urlToken) {
-    // Email verified successfully
     token = urlToken;
     document.getElementById('auth-card').classList.add('hidden');
     document.getElementById('verify-card').classList.remove('hidden');
     
-    // Clear URL parameters
     window.history.replaceState({}, document.title, window.location.pathname);
     
-    // Show app after 2 seconds
     setTimeout(() => {
       document.getElementById('verify-card').classList.add('hidden');
       showApp();
     }, 2000);
   } else if (isVerified === 'false') {
-    // Verification failed
     alert('Verification failed: ' + (verificationError || 'Unknown error'));
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 
-  // ---------- AUTH ----------
   const loginTab = document.getElementById('loginTab');
   const registerTab = document.getElementById('registerTab');
   const authBtn = document.getElementById('authBtn');
@@ -406,12 +396,10 @@
       }
 
       if (endpoint === 'register') {
-        // Show verification message
         pendingVerificationEmail = email;
         document.getElementById('authForm').classList.add('hidden');
         document.getElementById('verificationMessage').classList.remove('hidden');
       } else {
-        // Login successful
         token = data.access_token;
         console.log('Logged in successfully');
         showApp();
@@ -422,7 +410,6 @@
     }
   });
 
-  // Resend verification email
   document.getElementById('resendBtn').addEventListener('click', async () => {
     if (!pendingVerificationEmail) return;
     
@@ -446,7 +433,6 @@
     }
   });
 
-  // Back to login
   document.getElementById('backToLoginBtn').addEventListener('click', () => {
     document.getElementById('authForm').classList.remove('hidden');
     document.getElementById('verificationMessage').classList.add('hidden');
@@ -455,7 +441,6 @@
     passwordInput.value = '';
   });
 
-  // Verify email token from URL
   async function verifyEmailToken(verificationToken) {
     document.getElementById('auth-card').classList.add('hidden');
     document.getElementById('verify-card').classList.remove('hidden');
@@ -465,11 +450,9 @@
       const data = await res.json();
 
       if (res.ok) {
-        // Set the token from verification response
         token = data.access_token;
         console.log('Email verified, token received:', token);
         
-        // Wait 2 seconds then show app
         setTimeout(() => {
           document.getElementById('verify-card').classList.add('hidden');
           showApp();
@@ -502,7 +485,6 @@
     loadTasks();
   }
 
-  // ---------- LOAD TASKS ----------
   async function loadTasks() {
     try {
       const res = await fetch(`${API}/tasks`, {
@@ -543,14 +525,12 @@
       html += `<p>${escapeHtml(task.description || 'No description provided')}</p>`;
       html += `<div class="task-meta">`;
 
-      // Ownership badge
       if (task.isOwner === true) {
         html += `<span class="badge owner">✓ Owner</span>`;
       } else {
         html += `<span class="badge shared">↓ Shared with you</span>`;
       }
 
-      // Permission badge (only for shared tasks)
       if (task.permission) {
         const permLower = task.permission.toLowerCase();
         const permText = permLower === 'read' ? 'Read Only' : 'Can Edit';
@@ -559,21 +539,17 @@
 
       html += `</div>`;
 
-      // Action buttons
       html += `<div class="task-actions">`;
 
-      // Edit button - show if owner or has WRITE permission
       const canEdit = task.isOwner === true || task.permission === 'WRITE';
       if (canEdit) {
         html += `<button class="edit-btn" data-task-id="${task.id}" data-action="edit">✏️ Edit</button>`;
       }
 
-      // Share button - only for owners
       if (task.isOwner === true) {
         html += `<button class="share-btn" data-task-id="${task.id}" data-task-title="${escapeHtml(task.title)}" data-action="share">🔗 Share</button>`;
       }
 
-      // Delete button - owner or WRITE permission
       if (canEdit) {
         html += `<button class="delete-btn" data-task-id="${task.id}" data-action="delete">🗑️ Delete</button>`;
       }
@@ -584,7 +560,6 @@
       container.appendChild(taskDiv);
     });
 
-    // Attach event listeners to buttons
     document.querySelectorAll('[data-action="edit"]').forEach(btn => {
       btn.addEventListener('click', function() {
         const taskId = parseInt(this.getAttribute('data-task-id'));
@@ -615,7 +590,6 @@
     return div.innerHTML;
   }
 
-  // ---------- CREATE TASK ----------
   document.getElementById('newTaskBtn').addEventListener('click', () => {
     editingTaskId = null;
     document.getElementById('taskModalTitle').textContent = 'Create New Task';
@@ -624,7 +598,6 @@
     document.getElementById('taskModal').classList.remove('hidden');
   });
 
-  // ---------- SAVE TASK ----------
   document.getElementById('saveTaskBtn').addEventListener('click', async () => {
     const title = document.getElementById('taskTitle').value.trim();
     const description = document.getElementById('taskDesc').value.trim();
@@ -689,7 +662,6 @@
     editingTaskId = null;
   }
 
-  // ---------- EDIT TASK ----------
   function handleEditTask(taskId) {
     console.log('Editing task:', taskId);
     editingTaskId = taskId;
@@ -706,7 +678,6 @@
     }
   }
 
-  // ---------- DELETE TASK ----------
   async function handleDeleteTask(taskId) {
     if (!confirm('Are you sure you want to delete this task?')) {
       return;
@@ -734,7 +705,6 @@
     }
   }
 
-  // ---------- SHARE TASK ----------
   function handleShareTask(taskId, taskTitle) {
     console.log('Sharing task:', taskId);
     sharingTaskId = taskId;
@@ -795,7 +765,6 @@
     sharingTaskId = null;
   }
 
-  // Close modals on outside click
   document.getElementById('taskModal').addEventListener('click', (e) => {
     if (e.target.id === 'taskModal') closeTaskModal();
   });
